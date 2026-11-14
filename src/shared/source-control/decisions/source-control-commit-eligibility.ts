@@ -45,11 +45,7 @@ export function canSubmitCommit(inputs: CommitEligibilityInputs): boolean {
   return !isCommitGloballyBusy(inputs) && resolveCommitDisabledReason(inputs) === null
 }
 
-// Allow typing through the empty-message blocker; other commit blockers and in-flight work lock editing.
+// Why: users draft the message before staging; only conflicts and in-flight work lock editing.
 export function isCommitMessageFieldDisabled(inputs: CommitEligibilityInputs): boolean {
-  if (isCommitGloballyBusy(inputs)) {
-    return true
-  }
-  const commitDisabledReason = resolveCommitDisabledReason(inputs)
-  return commitDisabledReason !== null && commitDisabledReason !== COMMIT_MESSAGE_REQUIRED_REASON
+  return isCommitGloballyBusy(inputs) || inputs.hasUnresolvedConflicts
 }
